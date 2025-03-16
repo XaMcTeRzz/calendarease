@@ -38,21 +38,24 @@ const menuItems = [
 export function AppSidebar() {
   return (
     <Sidebar>
-      <div className="flex items-center justify-between p-4">
-        <h2 className="text-xl font-semibold text-primary">CalendarEase</h2>
-        <SidebarTrigger>
+      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+        <h2 className="text-xl font-semibold text-gray-100">CalendarEase</h2>
+        <SidebarTrigger className="text-gray-400 hover:text-gray-100">
           <Menu className="h-6 w-6" />
         </SidebarTrigger>
       </div>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Меню</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-gray-400">Меню</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href} className="flex items-center space-x-2">
+                    <a 
+                      href={item.href} 
+                      className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md px-3 py-2 transition-colors"
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
                     </a>
