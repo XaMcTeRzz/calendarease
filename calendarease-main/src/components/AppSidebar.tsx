@@ -32,7 +32,7 @@ export function AppSidebar() {
   return (
     <div className={`${isOpen ? 'w-64' : 'w-20'} bg-gray-800 text-white transition-all duration-300 ease-in-out`}>
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        {isOpen && <h2 className="text-xl font-semibold">CalendarEase</h2>}
+        {isOpen && <h2 className="text-xl font-semibold">Календар by XaMcTeR</h2>}
         <button 
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 rounded-lg hover:bg-gray-700 transition-colors"

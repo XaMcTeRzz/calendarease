@@ -16,7 +16,7 @@ export default function Index() {
     <Layout>
       <div className="space-y-8">
         <section>
-          <h1 className="text-4xl font-bold mb-6">Ласкаво просимо до CalendarEase</h1>
+          <h1 className="text-4xl font-bold mb-6">Календар by XaMcTeR</h1>
           <p className="text-gray-400 text-lg mb-8">
             Ваш персональний помічник для управління задачами, нагадуваннями та голосовими замітками.
           </p>
