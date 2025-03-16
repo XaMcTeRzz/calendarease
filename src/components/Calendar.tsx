@@ -16,29 +16,41 @@ export const CalendarView = () => {
   
   return (
     <div className="w-full max-w-md mx-auto p-4 space-y-4">
-      <Card className="w-full bg-[#222222] border-[#333333]">
-        <CardHeader>
+      <Card className="glass-card neon-border animate-fade-in">
+        <CardHeader className="relative">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <CalendarIcon className="h-6 w-6 text-gray-400" />
-              <CardTitle className="text-gray-200">Календар</CardTitle>
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-full bg-gray-800 bg-opacity-50 animate-float">
+                <CalendarIcon className="h-6 w-6 text-gray-300" />
+              </div>
+              <CardTitle className="text-gray-100 text-2xl font-light">Календар</CardTitle>
             </div>
             <Button 
               variant="outline" 
               size="icon"
-              className="rounded-full hover:bg-[#333333] hover:text-white transition-colors border-[#444444]"
+              className="rounded-full glass-effect hover:bg-gray-800 hover:text-white transition-all duration-300 transform hover:scale-105 animate-glow"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-5 w-5" />
             </Button>
           </div>
-          <CardDescription className="text-gray-400">Управління вашими задачами</CardDescription>
+          <CardDescription className="text-gray-400 mt-2 font-light">
+            Управління вашими задачами
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Calendar
             mode="single"
             selected={date}
             onSelect={setDate}
-            className="rounded-md border border-[#333333] bg-[#222222] text-gray-200"
+            className="rounded-xl border-0 glass-effect text-gray-200 p-4"
+            classNames={{
+              day_selected: "bg-gray-800 text-white hover:bg-gray-700",
+              day: "hover:bg-gray-800 transition-colors rounded-lg",
+              caption: "text-gray-300",
+              nav_button_previous: "hover:bg-gray-800 transition-colors rounded-lg",
+              nav_button_next: "hover:bg-gray-800 transition-colors rounded-lg",
+              head_cell: "text-gray-400",
+            }}
           />
         </CardContent>
       </Card>

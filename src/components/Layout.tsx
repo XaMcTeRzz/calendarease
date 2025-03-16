@@ -5,9 +5,9 @@ import { AppSidebar } from "./AppSidebar";
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-[#0a0a0a] via-[#1a1a1a] to-[#2a2a2a]">
         <AppSidebar />
-        <main className="flex-1 p-4">
+        <main className="flex-1 p-4 md:p-6 animate-fade-in">
           {children}
         </main>
       </div>
