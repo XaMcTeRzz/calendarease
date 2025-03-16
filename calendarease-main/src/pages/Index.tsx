@@ -2,6 +2,8 @@ import { Layout } from "@/components/Layout";
 import { useTasks } from "@/lib/contexts/TaskContext";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Helmet } from "react-helmet";
 
 export default function Index() {
   const { tasks, getTasksForDate } = useTasks();
@@ -12,8 +14,23 @@ export default function Index() {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 5);
 
+  // Додаємо параметр до URL для обходу кешу
+  useEffect(() => {
+    const cacheBusterParam = `?v=${new Date().getTime()}`;
+    if (!window.location.search && window.location.pathname === '/') {
+      window.history.replaceState(null, '', window.location.pathname + cacheBusterParam);
+    }
+  }, []);
+
   return (
     <Layout>
+      {/* Додаємо мета-теги для запобігання кешуванню */}
+      <Helmet>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+      </Helmet>
+      
       <div className="space-y-8">
         <section>
           <h1 className="text-4xl font-bold mb-6">Календар by XaMcTeR</h1>
