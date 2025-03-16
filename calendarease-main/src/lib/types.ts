@@ -4,19 +4,22 @@ export interface Task {
   description?: string;
   date: Date;
   completed: boolean;
-  reminderEnabled: boolean;
   reminderTime?: Date;
-  tags?: string[];
+  telegramChatId?: string;
 }
 
 export interface VoiceNote {
   id: string;
-  title: string;
-  recordingUrl: string;
-  transcription?: string;
+  taskId: string;
+  audioUrl: string;
   date: Date;
-  duration: number; // in seconds
-  taskId?: string; // optional association with a task
+  duration: number;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  telegramChatId?: string;
 }
 
 export type TaskWithVoiceNotes = Task & {

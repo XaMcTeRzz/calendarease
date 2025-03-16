@@ -1,7 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { useTasks } from "@/lib/contexts/TaskContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, Calendar, CheckCircle2, Trash2, Send } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Bell, Calendar, Clock, CheckCircle2, Trash2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -71,98 +71,66 @@ export default function RemindersPage() {
   
   return (
     <Layout>
-      <div className="w-full max-w-4xl mx-auto p-2 md:p-4">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="p-2 rounded-full bg-gray-800 bg-opacity-50">
-            <Bell className="h-5 w-5 md:h-6 md:w-6 text-gray-300" />
-          </div>
-          <h1 className="text-2xl md:text-3xl font-light text-gray-100">Нагадування</h1>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Нагадування</h1>
+          <Button>
+            <Bell className="w-4 h-4 mr-2" />
+            Налаштування нагадувань
+          </Button>
         </div>
         
-        <Card className="bg-gray-800/30 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-gray-200">Всі нагадування</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {remindersTask.length > 0 ? (
-              <ScrollArea className="h-[500px] pr-4">
-                <div className="space-y-4">
-                  {remindersTask.map((task) => (
-                    <Card 
-                      key={task.id} 
-                      className={`bg-gray-800/40 border-gray-700 hover:border-gray-600 transition-colors ${
-                        task.completed ? 'opacity-60' : ''
-                      }`}
+        {remindersTask.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {remindersTask.map((task) => (
+              <Card key={task.id}>
+                <CardHeader>
+                  <CardTitle>{task.title}</CardTitle>
+                  <CardDescription>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>{format(new Date(task.date), "dd.MM.yyyy")}</span>
+                      {task.reminderTime && (
+                        <>
+                          <Clock className="w-4 h-4 ml-2" />
+                          <span>{format(new Date(task.reminderTime), "HH:mm")}</span>
+                        </>
+                      )}
+                    </div>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {task.description && (
+                    <p className="text-gray-400 mb-4">{task.description}</p>
+                  )}
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      onClick={() => handleSendToTelegram(task.id)}
+                      disabled={sendingTelegramId === task.id}
                     >
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-2">
-                            <h3 className={`text-lg font-medium ${task.completed ? 'line-through text-gray-400' : 'text-gray-200'}`}>
-                              {task.title}
-                            </h3>
-                            
-                            {task.description && (
-                              <p className="text-sm text-gray-400">{task.description}</p>
-                            )}
-                            
-                            <div className="flex flex-wrap gap-2 mt-3">
-                              <Badge>
-                                <Calendar className="h-3 w-3 mr-1" />
-                                {format(new Date(task.date), 'dd MMMM yyyy', { locale: uk })}
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          <div className="flex space-x-2">
-                            {!task.completed && (
-                              <>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleSendToTelegram(task.id)}
-                                  disabled={sendingTelegramId === task.id}
-                                  className="h-8 w-8 rounded-full hover:bg-blue-900/30 hover:text-blue-400"
-                                >
-                                  <Send className={`h-4 w-4 ${sendingTelegramId === task.id ? 'animate-pulse' : ''}`} />
-                                </Button>
-                                
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => markAsComplete(task.id)}
-                                  className="h-8 w-8 rounded-full hover:bg-green-900/30 hover:text-green-400"
-                                >
-                                  <CheckCircle2 className="h-4 w-4" />
-                                </Button>
-                              </>
-                            )}
-                            
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => deleteTask(task.id)}
-                              className="h-8 w-8 rounded-full hover:bg-red-900/30 hover:text-red-400"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </ScrollArea>
-            ) : (
-              <div className="text-center py-16">
-                <Bell className="h-10 w-10 text-gray-500 mx-auto mb-4 opacity-50" />
-                <p className="text-gray-400">У вас немає активних нагадувань</p>
-                <p className="text-gray-500 text-sm mt-1">
-                  Створіть нове завдання з нагадуванням у календарі
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      <Send className="w-4 h-4 mr-2" />
+                      Відправити в Telegram
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-center text-gray-400">
+                У вас немає активних нагадувань
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </Layout>
   );

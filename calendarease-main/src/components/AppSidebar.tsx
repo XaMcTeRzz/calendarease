@@ -1,17 +1,6 @@
-
+import { useState } from 'react';
 import { Calendar, Home, Mic, Bell, Menu } from "lucide-react";
-import { Link } from "react-router-dom";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   {
@@ -37,36 +26,40 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const [isOpen, setIsOpen] = useState(true);
+  const location = useLocation();
+
   return (
-    <Sidebar>
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        <h2 className="text-xl font-semibold text-gray-100">CalendarEase</h2>
-        <SidebarTrigger className="text-gray-400 hover:text-gray-100">
+    <div className={`${isOpen ? 'w-64' : 'w-20'} bg-gray-800 text-white transition-all duration-300 ease-in-out`}>
+      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+        {isOpen && <h2 className="text-xl font-semibold">CalendarEase</h2>}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+        >
           <Menu className="h-6 w-6" />
-        </SidebarTrigger>
+        </button>
       </div>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-400">Меню</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link 
-                      to={item.href} 
-                      className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md px-3 py-2 transition-colors"
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+      
+      <nav className="p-4">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={`
+                flex items-center space-x-2 p-3 rounded-lg mb-2
+                ${isActive ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}
+                transition-colors
+              `}
+            >
+              <item.icon className="h-5 w-5 flex-shrink-0" />
+              {isOpen && <span>{item.title}</span>}
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
   );
 }

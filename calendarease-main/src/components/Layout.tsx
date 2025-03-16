@@ -1,16 +1,17 @@
+import { ReactNode } from 'react';
+import { AppSidebar } from './AppSidebar';
 
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "./AppSidebar";
+interface LayoutProps {
+  children: ReactNode;
+}
 
-export const Layout = ({ children }: { children: React.ReactNode }) => {
+export function Layout({ children }: LayoutProps) {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-[#0a0a0a] via-[#1a1a1a] to-[#2a2a2a]">
-        <AppSidebar />
-        <main className="flex-1 p-2 md:p-6 animate-fade-in overflow-x-hidden">
-          {children}
-        </main>
-      </div>
-    </SidebarProvider>
+    <div className="flex h-screen bg-gray-900">
+      <AppSidebar />
+      <main className="flex-1 overflow-auto p-8">
+        {children}
+      </main>
+    </div>
   );
-};
+}

@@ -2,18 +2,25 @@ import { Layout } from "@/components/Layout";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { useTasks } from "@/lib/contexts/TaskContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mic, Play, Pause, Trash2, Calendar, LinkIcon } from "lucide-react";
+import { Mic, Play, Pause, Trash2, Calendar, LinkIcon, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { uk } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useRef } from "react";
+import { VoiceNote } from "@/lib/types";
 
 export default function VoiceNotesPage() {
-  const { voiceNotes, deleteVoiceNote, tasks } = useTasks();
+  const { voiceNotes, deleteVoiceNote, tasks, addVoiceNote } = useTasks();
   const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<number | null>(null);
   
   // Відсортувати голосові замітки за датою (найновіші спочатку)
   const sortedVoiceNotes = [...voiceNotes].sort((a, b) => 
@@ -53,7 +60,69 @@ export default function VoiceNotesPage() {
     const task = tasks.find(t => t.id === taskId);
     return task ? task.title : null;
   };
-  
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const url = URL.createObjectURL(blob);
+        setAudioURL(url);
+
+        // Зберігаємо голосову замітку
+        const newVoiceNote: Omit<VoiceNote, "id"> = {
+          taskId: "", // Можна буде пов'язати з задачею пізніше
+          audioUrl: url,
+          date: new Date(),
+          duration: recordingDuration
+        };
+        addVoiceNote(newVoiceNote);
+
+        // Очищаємо
+        stream.getTracks().forEach(track => track.stop());
+        if (timerRef.current) clearInterval(timerRef.current);
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+
+      // Запускаємо таймер
+      let duration = 0;
+      timerRef.current = window.setInterval(() => {
+        duration += 1;
+        setRecordingDuration(duration);
+      }, 1000);
+
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      setRecordingDuration(0);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
   return (
     <Layout>
       <div className="w-full max-w-4xl mx-auto p-2 md:p-4">
@@ -62,6 +131,25 @@ export default function VoiceNotesPage() {
             <Mic className="h-5 w-5 md:h-6 md:w-6 text-gray-300" />
           </div>
           <h1 className="text-2xl md:text-3xl font-light text-gray-100">Голосові замітки</h1>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <Button
+            onClick={isRecording ? stopRecording : startRecording}
+            variant={isRecording ? "destructive" : "default"}
+          >
+            {isRecording ? (
+              <>
+                <Square className="w-4 h-4 mr-2" />
+                Зупинити запис ({formatDuration(recordingDuration)})
+              </>
+            ) : (
+              <>
+                <Mic className="w-4 h-4 mr-2" />
+                Почати запис
+              </>
+            )}
+          </Button>
         </div>
         
         <div className="grid gap-6 md:grid-cols-3">
