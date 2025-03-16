@@ -1,5 +1,6 @@
 
 import { Calendar, Home, Mic, Bell, Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -52,13 +53,13 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a 
-                      href={item.href} 
+                    <Link 
+                      to={item.href} 
                       className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-md px-3 py-2 transition-colors"
                     >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
